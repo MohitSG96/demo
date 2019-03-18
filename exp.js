@@ -1,7 +1,7 @@
+/* eslint-disable no-console */
 const express = require("express");
 const app = express();
-const courses = [
-  {
+const courses = [{
     id: 1,
     name: "Course1"
   },
@@ -14,6 +14,8 @@ const courses = [
     name: "Course3"
   }
 ];
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello World!!!");
@@ -30,8 +32,18 @@ app.get("/api/courses/:id", (req, res) => {
 });
 
 //Query with parameters
-app.get("/api/post/:year/:month", (req, res) => {
+app.get("/api/posts/:year/:month", (req, res) => {
   res.send(req.query);
+});
+
+//POST handling
+app.post("/api/courses", (req, res) => {
+  const course = {
+    id: courses.length + 1,
+    name: req.body.name
+  };
+  courses.push(course);
+  res.send(course);
 });
 //PORT
 const port = process.env.PORT || 3000;
