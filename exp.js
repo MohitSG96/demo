@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const express = require("express");
 const app = express();
+
 const courses = [
   {
     id: 1,
@@ -15,8 +16,11 @@ const courses = [
     name: "Course3"
   }
 ];
-
+//Custom middleware creation
 app.use(express.json());
+app.use(function(req, res, next) {
+  console.log("Logging...");
+});
 
 app.get("/", (req, res) => {
   res.send("Hello World!!!");
@@ -64,7 +68,6 @@ app.put("/api/courses/:id", (req, res) => {
     //400 Bad Request
     return res.status(400).send(error.details[0].message);
   }
-
   course.name = req.body.name;
   res.send(course);
 });
