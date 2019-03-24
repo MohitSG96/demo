@@ -1,9 +1,11 @@
+const morgan = require("morgan");
+const helmet = require("helmet");
+const logger = require("./logger");
 const Joi = require("joi");
 const express = require("express");
 const app = express();
 
-const courses = [
-  {
+const courses = [{
     id: 1,
     name: "Course1"
   },
@@ -16,12 +18,19 @@ const courses = [
     name: "Course3"
   }
 ];
-//Custom middleware creation
-app.use(express.json());
-app.use(function(req, res, next) {
-  console.log("Logging...");
-});
 
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use(express.static('public'));
+app.use(helmet());
+if (app.get('env') === 'development') {
+  app.use(morgan('tiny'));
+  console.log('Morgan Enabled...');
+}
+
+app.use(logger);
 app.get("/", (req, res) => {
   res.send("Hello World!!!");
 });
@@ -45,7 +54,9 @@ app.get("/api/posts/:year/:month", (req, res) => {
 
 //POST handling for adding new course
 app.post("/api/courses", (req, res) => {
-  const { error } = validateCourse(req.body);
+  const {
+    error
+  } = validateCourse(req.body);
   if (error) {
     //400 Bad Request
     return res.status(400).send(error.details[0].message);
@@ -63,7 +74,9 @@ app.put("/api/courses/:id", (req, res) => {
   const course = courses.find(c => c.id === parseInt(req.params.id));
   if (!course) return res.status(404).send("the course id was not found");
 
-  const { error } = validateCourse(req.body);
+  const {
+    error
+  } = validateCourse(req.body);
   if (error) {
     //400 Bad Request
     return res.status(400).send(error.details[0].message);
