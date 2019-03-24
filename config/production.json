@@ -1,0 +1,6 @@
+{
+    "name": "my node course - Production",
+    "mail": {
+        "host": "Production mail server"
+    }
+}
